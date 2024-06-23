@@ -9,14 +9,15 @@ class Settings(BaseSettings):
     GEMINI_MODEL: str
     REDIS_HOST: str
     REDIS_PORT: int
-    ALLOW_HOSTS: list
+    ALLOWED_HOST_1: str
+    ALLOWED_HOST_2: str
     ENV: str
     PORT: int
 
     class Config:
        
        env = os.getenv("ENV", "development")
-       
+
        if env == "production":
             env_file = ".env.production"
        elif env == "development":
