@@ -2,7 +2,7 @@ ARG AI_ASSISTANT_IMAGE
 
 FROM ${AI_ASSISTANT_IMAGE}
 
-WORKDIR /app
+WORKDIR /
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
@@ -39,4 +39,4 @@ COPY . .
 
 ENV PATH="/usr/local/bin:${PATH}"
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", ${APP_PORT}]
+CMD uvicorn main:app --host 0.0.0.0 --port ${APP_PORT}
