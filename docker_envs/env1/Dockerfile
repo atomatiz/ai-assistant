@@ -8,6 +8,8 @@ ENV PYTHONUNBUFFERED 1
 ARG APP_PORT
 ARG APP_ENV
 
+WORKDIR /app
+
 COPY . .
 
 RUN python -m pip install --upgrade pip
@@ -34,4 +36,4 @@ RUN --mount=type=secret,id=OPENAI_API_KEY \
     ENV=$(cat /run/secrets/ENV)'\n'\
     PORT=$(cat /run/secrets/PORT) >> .env.${APP_ENV}
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", ${APP_PORT}]
+CMD ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", ${APP_PORT}]
