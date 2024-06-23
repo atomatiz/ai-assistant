@@ -2,7 +2,7 @@ ARG AI_ASSISTANT_IMAGE
 
 FROM ${AI_ASSISTANT_IMAGE}
 
-WORKDIR /
+WORKDIR /app
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
@@ -10,9 +10,9 @@ ENV PYTHONUNBUFFERED 1
 ARG APP_PORT
 ARG APP_ENV
 
-COPY requirements.txt .
+COPY requirements.txt /app/requirements.txt
 RUN python -m pip install --upgrade pip
-RUN pip install --no-cache-dir --upgrade -r requirements.txt
+RUN pip install --no-cache-dir --upgrade -r /app/requirements.txt
 
 RUN --mount=type=secret,id=OPENAI_API_KEY \
     --mount=type=secret,id=GEMINI_API_KEY \
@@ -35,8 +35,6 @@ RUN --mount=type=secret,id=OPENAI_API_KEY \
     ENV=$(cat /run/secrets/ENV)'\n'\
     PORT=$(cat /run/secrets/PORT) >> .env.${APP_ENV}
 
-COPY . .
-
-ENV PATH="/usr/local/bin:${PATH}"
+COPY . /app
 
 CMD uvicorn main:app --host 0.0.0.0 --port ${APP_PORT}
