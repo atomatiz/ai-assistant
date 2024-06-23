@@ -2,6 +2,8 @@ ARG AI_ASSISTANT_IMAGE
 
 FROM ${AI_ASSISTANT_IMAGE}
 
+WORKDIR /app
+
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
@@ -33,7 +35,6 @@ RUN --mount=type=secret,id=OPENAI_API_KEY \
     ENV=$(cat /run/secrets/ENV)'\n'\
     PORT=$(cat /run/secrets/PORT) >> .env.${APP_ENV}
 
-WORKDIR /app
-COPY . /app
+COPY . .
 
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", ${APP_PORT}]
