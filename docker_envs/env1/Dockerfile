@@ -4,10 +4,11 @@ FROM ${AI_ASSISTANT_IMAGE}
 
 WORKDIR /app
 
+ARG APP_ENV
+
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
-
-ARG APP_ENV
+ENV ENV=${APP_ENV}
 
 COPY requirements.txt /app/requirements.txt
 RUN python -m pip install --upgrade pip
