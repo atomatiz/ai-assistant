@@ -38,7 +38,6 @@ jobs:
           tags: ${{ secrets.DOCKER_USERNAME }}/${{secrets.DOCKER_IMAGE}}:${{vars.AI_ASSISTANT_TAG}}
           build-args: |
             "AI_ASSISTANT_IMAGE=${{ vars.AI_ASSISTANT_IMAGE }}"
-            "APP_PORT=${{ vars.APP_PORT }}"
             "APP_ENV=${{ vars.APP_ENV }}"
           secrets: |
             "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}"
