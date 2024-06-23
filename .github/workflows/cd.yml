@@ -40,36 +40,36 @@ jobs:
             "AI_ASSISTANT_IMAGE=${{ vars.AI_ASSISTANT_IMAGE }}"
             "APP_PORT=${{ vars.APP_PORT }}"
             "APP_ENV=${{ vars.APP_ENV }}"
-          secrets: |
-            "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}"
-            "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}"
-            "OPENAI_MODEL=${{ secrets.OPENAI_MODEL }}"
-            "GEMINI_MODEL=${{ secrets.GEMINI_MODEL }}"
-            "REDIS_HOST=${{ secrets.REDIS_HOST }}"
-            "REDIS_PORT=${{ secrets.REDIS_PORT }}"
-            "ALLOW_HOSTS=${{ secrets.ALLOW_HOSTS }}"
-            "ENV=${{ secrets.ENV }}"
-            "PORT=${{ secrets.PORT }}"
-      - name: Verify docker job
-        run: echo ${{ steps.docker_build.outputs.digest }}
-  deploy:
-    runs-on: ${{vars.HOST_IMAGE}}
-    needs: [build]
-    steps:
-      - name: Access host and deploy app
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.ORC_HOST }}
-          username: ${{ secrets.ORC_USERNAME }}
-          key: ${{ secrets.ORC_SSH_KEY }}
-          script: |
-            ${{vars.AI_ASSISTANT_CMD}} echo ${{ secrets.DOCKER_SECRET }} | ${{vars.AI_ASSISTANT_CMD}} docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-            ${{vars.AI_ASSISTANT_CMD}} docker pull ${{ secrets.DOCKER_USERNAME }}/${{secrets.DOCKER_IMAGE}}:${{vars.AI_ASSISTANT_TAG}} || true
-            ${{vars.AI_ASSISTANT_CMD}} docker stop ${{vars.AI_ASSISTANT_CONTAINER}}-2 || true
-            ${{vars.AI_ASSISTANT_CMD}} docker rm ${{vars.AI_ASSISTANT_CONTAINER}}-2 || true
-            ${{vars.AI_ASSISTANT_CMD}} docker run -d --restart unless-stopped -p ${{ vars.AI_ASSISTANT_EXPOSE_PORT_2 }}:${{ vars.AI_ASSISTANT_PORT }} --name ${{vars.AI_ASSISTANT_CONTAINER}}-2 ${{ secrets.DOCKER_USERNAME }}/${{secrets.DOCKER_IMAGE}}:${{vars.AI_ASSISTANT_TAG}} || true
-            ${{vars.AI_ASSISTANT_CMD}} docker stop ${{vars.AI_ASSISTANT_CONTAINER}}-1 || true
-            ${{vars.AI_ASSISTANT_CMD}} docker rm ${{vars.AI_ASSISTANT_CONTAINER}}-1 || true
-            ${{vars.AI_ASSISTANT_CMD}} docker run -d --restart unless-stopped -p ${{ vars.AI_ASSISTANT_EXPOSE_PORT_1 }}:${{ vars.AI_ASSISTANT_PORT }} --name ${{vars.AI_ASSISTANT_CONTAINER}}-1 ${{ secrets.DOCKER_USERNAME }}/${{secrets.DOCKER_IMAGE}}:${{vars.AI_ASSISTANT_TAG}} || true
-            ${{vars.AI_ASSISTANT_CMD}} docker image prune -af || true
-            ${{vars.AI_ASSISTANT_CMD}} docker volume prune -af || true
+  #         secrets: |
+  #           "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}"
+  #           "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}"
+  #           "OPENAI_MODEL=${{ secrets.OPENAI_MODEL }}"
+  #           "GEMINI_MODEL=${{ secrets.GEMINI_MODEL }}"
+  #           "REDIS_HOST=${{ secrets.REDIS_HOST }}"
+  #           "REDIS_PORT=${{ secrets.REDIS_PORT }}"
+  #           "ALLOW_HOSTS=${{ secrets.ALLOW_HOSTS }}"
+  #           "ENV=${{ secrets.ENV }}"
+  #           "PORT=${{ secrets.PORT }}"
+  #     - name: Verify docker job
+  #       run: echo ${{ steps.docker_build.outputs.digest }}
+  # deploy:
+  #   runs-on: ${{vars.HOST_IMAGE}}
+  #   needs: [build]
+  #   steps:
+  #     - name: Access host and deploy app
+  #       uses: appleboy/ssh-action@v1.0.3
+  #       with:
+  #         host: ${{ secrets.ORC_HOST }}
+  #         username: ${{ secrets.ORC_USERNAME }}
+  #         key: ${{ secrets.ORC_SSH_KEY }}
+  #         script: |
+  #           ${{vars.AI_ASSISTANT_CMD}} echo ${{ secrets.DOCKER_SECRET }} | ${{vars.AI_ASSISTANT_CMD}} docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+  #           ${{vars.AI_ASSISTANT_CMD}} docker pull ${{ secrets.DOCKER_USERNAME }}/${{secrets.DOCKER_IMAGE}}:${{vars.AI_ASSISTANT_TAG}} || true
+  #           ${{vars.AI_ASSISTANT_CMD}} docker stop ${{vars.AI_ASSISTANT_CONTAINER}}-2 || true
+  #           ${{vars.AI_ASSISTANT_CMD}} docker rm ${{vars.AI_ASSISTANT_CONTAINER}}-2 || true
+  #           ${{vars.AI_ASSISTANT_CMD}} docker run -d --restart unless-stopped -p ${{ vars.AI_ASSISTANT_EXPOSE_PORT_2 }}:${{ vars.AI_ASSISTANT_PORT }} --name ${{vars.AI_ASSISTANT_CONTAINER}}-2 ${{ secrets.DOCKER_USERNAME }}/${{secrets.DOCKER_IMAGE}}:${{vars.AI_ASSISTANT_TAG}} || true
+  #           ${{vars.AI_ASSISTANT_CMD}} docker stop ${{vars.AI_ASSISTANT_CONTAINER}}-1 || true
+  #           ${{vars.AI_ASSISTANT_CMD}} docker rm ${{vars.AI_ASSISTANT_CONTAINER}}-1 || true
+  #           ${{vars.AI_ASSISTANT_CMD}} docker run -d --restart unless-stopped -p ${{ vars.AI_ASSISTANT_EXPOSE_PORT_1 }}:${{ vars.AI_ASSISTANT_PORT }} --name ${{vars.AI_ASSISTANT_CONTAINER}}-1 ${{ secrets.DOCKER_USERNAME }}/${{secrets.DOCKER_IMAGE}}:${{vars.AI_ASSISTANT_TAG}} || true
+  #           ${{vars.AI_ASSISTANT_CMD}} docker image prune -af || true
+  #           ${{vars.AI_ASSISTANT_CMD}} docker volume prune -af || true
