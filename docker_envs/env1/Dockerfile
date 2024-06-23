@@ -37,4 +37,8 @@ RUN --mount=type=secret,id=OPENAI_API_KEY \
 
 COPY . .
 
+# Debugging steps
+RUN pip show uvicorn
+RUN echo $PATH
+
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", ${APP_PORT}]
