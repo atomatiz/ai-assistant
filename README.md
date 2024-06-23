@@ -1,6 +1,6 @@
 # AI Assistant.
 
-This is AI Assistant repo which is created by FastAPI, Redis, Websocket, Cloudhost, OpenAI, Gemini, Docker, Github CI/CD and Nginx.
+This is AI Assistant repo which is created by FastAPI, Redis, Websocket, Cloudhost, OpenAI, Gemini, Docker, Github CI/CD.
 
 ## Running Locally
 
