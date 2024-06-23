@@ -8,9 +8,8 @@ ENV PYTHONUNBUFFERED 1
 ARG APP_PORT
 ARG APP_ENV
 
-WORKDIR /app
+COPY . .
 
-COPY requirements.txt .
 RUN python -m pip install --upgrade pip
 RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
@@ -34,7 +33,5 @@ RUN --mount=type=secret,id=OPENAI_API_KEY \
     ALLOWED_HOST_2=$(cat /run/secrets/ALLOWED_HOST_2)'\n'\ 
     ENV=$(cat /run/secrets/ENV)'\n'\
     PORT=$(cat /run/secrets/PORT) >> .env.${APP_ENV}
-
-COPY . .
 
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", ${APP_PORT}]
