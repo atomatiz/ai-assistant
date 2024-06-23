@@ -10,9 +10,10 @@ ARG APP_ENV
 
 WORKDIR /app
 
-COPY ./requirements.txt .
+COPY requirements.txt ./
 RUN python -m pip install --upgrade pip
 RUN pip install --no-cache-dir --upgrade -r requirements.txt
+RUN pip install fastapi uvicorn
 
 RUN --mount=type=secret,id=OPENAI_API_KEY \
     --mount=type=secret,id=GEMINI_API_KEY \
@@ -20,7 +21,8 @@ RUN --mount=type=secret,id=OPENAI_API_KEY \
     --mount=type=secret,id=GEMINI_MODEL \
     --mount=type=secret,id=REDIS_HOST \
     --mount=type=secret,id=REDIS_PORT \
-    --mount=type=secret,id=ALLOW_HOSTS \
+    --mount=type=secret,id=ALLOWED_HOST_1 \
+    --mount=type=secret,id=ALLOWED_HOST_2 \
     --mount=type=secret,id=ENV \
     --mount=type=secret,id=PORT \
     echo -e OPENAI_API_KEY=$(cat /run/secrets/OPENAI_API_KEY)'\n'\
@@ -29,7 +31,8 @@ RUN --mount=type=secret,id=OPENAI_API_KEY \
     GEMINI_MODEL=$(cat /run/secrets/GEMINI_MODEL)'\n'\
     REDIS_HOST=$(cat /run/secrets/REDIS_HOST)'\n'\
     REDIS_PORT=$(cat /run/secrets/REDIS_PORT)'\n'\
-    ALLOW_HOSTS=$(cat /run/secrets/ALLOW_HOSTS)'\n'\ 
+    ALLOWED_HOST_1=$(cat /run/secrets/ALLOWED_HOST_1)'\n'\ 
+    ALLOWED_HOST_2=$(cat /run/secrets/ALLOWED_HOST_2)'\n'\ 
     ENV=$(cat /run/secrets/ENV)'\n'\
     PORT=$(cat /run/secrets/PORT) >> .env.${APP_ENV}
 
