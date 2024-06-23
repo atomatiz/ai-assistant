@@ -10,9 +10,9 @@ ARG APP_ENV
 
 WORKDIR /app
 
-COPY requirements.txt /app/requirements.txt
+COPY requirements.txt .
 RUN python -m pip install --upgrade pip
-RUN pip install --no-cache-dir --upgrade -r /app/requirements.txt
+RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
 RUN --mount=type=secret,id=OPENAI_API_KEY \
     --mount=type=secret,id=GEMINI_API_KEY \
