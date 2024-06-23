@@ -7,7 +7,6 @@ WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-ARG APP_PORT
 ARG APP_ENV
 
 COPY requirements.txt /app/requirements.txt
@@ -37,4 +36,4 @@ RUN --mount=type=secret,id=OPENAI_API_KEY \
 
 COPY . /app
 
-CMD uvicorn main:app --host 0.0.0.0 --port ${APP_PORT}
+CMD uvicorn main:app --host 0.0.0.0 --port 8000
