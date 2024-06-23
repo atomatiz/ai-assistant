@@ -40,16 +40,17 @@ jobs:
             "AI_ASSISTANT_IMAGE=${{ vars.AI_ASSISTANT_IMAGE }}"
             "APP_PORT=${{ vars.APP_PORT }}"
             "APP_ENV=${{ vars.APP_ENV }}"
-  #         secrets: |
-  #           "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}"
-  #           "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}"
-  #           "OPENAI_MODEL=${{ secrets.OPENAI_MODEL }}"
-  #           "GEMINI_MODEL=${{ secrets.GEMINI_MODEL }}"
-  #           "REDIS_HOST=${{ secrets.REDIS_HOST }}"
-  #           "REDIS_PORT=${{ secrets.REDIS_PORT }}"
+          secrets: |
+            "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}"
+            "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}"
+            "OPENAI_MODEL=${{ secrets.OPENAI_MODEL }}"
+            "GEMINI_MODEL=${{ secrets.GEMINI_MODEL }}"
+            "REDIS_HOST=${{ secrets.REDIS_HOST }}"
+            "REDIS_PORT=${{ secrets.REDIS_PORT }}"
   #           "ALLOW_HOSTS=${{ secrets.ALLOW_HOSTS }}"
   #           "ENV=${{ secrets.ENV }}"
   #           "PORT=${{ secrets.PORT }}"
+
   #     - name: Verify docker job
   #       run: echo ${{ steps.docker_build.outputs.digest }}
   # deploy:
