@@ -4,10 +4,11 @@ FROM ${AI_ASSISTANT_IMAGE}
 
 WORKDIR /app
 
+ARG APP_ENV
+
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
-
-ARG APP_ENV
+ENV ENV=${APP_ENV}
 
 COPY requirements.txt /app/requirements.txt
 RUN python -m pip install --upgrade pip
@@ -23,7 +24,7 @@ RUN --mount=type=secret,id=OPENAI_API_KEY \
     --mount=type=secret,id=ALLOWED_HOST_2 \
     --mount=type=secret,id=ENV \
     --mount=type=secret,id=PORT \
-    echo -e OPENAI_API_KEY=$(cat /run/secrets/OPENAI_API_KEY)'\n'\
+    /bin/sh -c 'echo-e OPENAI_API_KEY=$(cat /run/secrets/OPENAI_API_KEY)'\n'\
     GEMINI_API_KEY=$(cat /run/secrets/GEMINI_API_KEY)'\n'\
     OPENAI_MODEL=$(cat /run/secrets/OPENAI_MODEL)'\n'\
     GEMINI_MODEL=$(cat /run/secrets/GEMINI_MODEL)'\n'\
@@ -32,7 +33,7 @@ RUN --mount=type=secret,id=OPENAI_API_KEY \
     ALLOWED_HOST_1=$(cat /run/secrets/ALLOWED_HOST_1)'\n'\ 
     ALLOWED_HOST_2=$(cat /run/secrets/ALLOWED_HOST_2)'\n'\ 
     ENV=$(cat /run/secrets/ENV)'\n'\
-    PORT=$(cat /run/secrets/PORT) >> .env.${APP_ENV}
+    PORT=$(cat /run/secrets/PORT) >> .env.${APP_ENV}'
 
 COPY . /app
 

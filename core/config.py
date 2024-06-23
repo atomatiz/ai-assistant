@@ -17,7 +17,6 @@ class Settings(BaseSettings):
     class Config:
        
        env = os.getenv("ENV", "development")
-
        if env == "production":
             env_file = ".env.production"
        elif env == "development":
