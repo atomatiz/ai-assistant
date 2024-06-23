@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+websockets
+openai
+redis
+pydantic
+pydantic-settings
+python-dotenv
+google.generativeai

@@ -1,0 +1,11 @@
+**/__pycache__/
+/venv
+*.pyc
+*.pyo
+*.pyd
+*.log
+*.env
+
+# misc
+.DS_Store
+*.pem

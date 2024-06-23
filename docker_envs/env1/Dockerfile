@@ -1,0 +1,38 @@
+ARG AI_ASSISTANT_IMAGE
+
+FROM ${AI_ASSISTANT_IMAGE}
+
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+ARG APP_PORT
+ARG APP_ENV
+
+WORKDIR /app
+
+COPY ./requirements.txt .
+RUN python -m pip install --upgrade pip
+RUN pip install --no-cache-dir --upgrade -r requirements.txt
+
+RUN --mount=type=secret,id=OPENAI_API_KEY \
+    --mount=type=secret,id=GEMINI_API_KEY \
+    --mount=type=secret,id=OPENAI_MODEL \
+    --mount=type=secret,id=GEMINI_MODEL \
+    --mount=type=secret,id=REDIS_HOST \
+    --mount=type=secret,id=REDIS_PORT \
+    --mount=type=secret,id=ALLOW_HOSTS \
+    --mount=type=secret,id=ENV \
+    --mount=type=secret,id=PORT \
+    echo -e OPENAI_API_KEY=$(cat /run/secrets/OPENAI_API_KEY)'\n'\
+    GEMINI_API_KEY=$(cat /run/secrets/GEMINI_API_KEY)'\n'\
+    OPENAI_MODEL=$(cat /run/secrets/OPENAI_MODEL)'\n'\
+    GEMINI_MODEL=$(cat /run/secrets/GEMINI_MODEL)'\n'\
+    REDIS_HOST=$(cat /run/secrets/REDIS_HOST)'\n'\
+    REDIS_PORT=$(cat /run/secrets/REDIS_PORT)'\n'\
+    ALLOW_HOSTS=$(cat /run/secrets/ALLOW_HOSTS)'\n'\ 
+    ENV=$(cat /run/secrets/ENV)'\n'\
+    PORT=$(cat /run/secrets/PORT) >> .env.${APP_ENV}
+
+COPY . .
+
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", ${APP_PORT}]
