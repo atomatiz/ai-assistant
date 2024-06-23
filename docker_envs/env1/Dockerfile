@@ -38,4 +38,4 @@ RUN --mount=type=secret,id=OPENAI_API_KEY \
 
 COPY . .
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", ${APP_PORT}]
+CMD ["python3", "-m", "virtualenv", "venv", "&&", "source", "venv/bin/activate", "&&", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", ${APP_PORT}]
