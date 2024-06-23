@@ -1,6 +1,5 @@
 import os
 from pydantic_settings import BaseSettings
-from dotenv import load_dotenv
 
 class Settings(BaseSettings):
     OPENAI_API_KEY: str
@@ -15,15 +14,6 @@ class Settings(BaseSettings):
     PORT: int
 
     class Config:
-       
-       env = os.getenv("ENV", "development")
-       if env == "production":
-            env_file = ".env.production"
-       elif env == "development":
-            env_file = ".env.development"
-       else:
-            env_file = ".env"
-        
-       load_dotenv(env_file)
+       env_file = ".env.production" if os.getenv("ENV") == "production" else ".env"
 
 settings = Settings()
