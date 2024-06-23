@@ -10,10 +10,9 @@ ARG APP_ENV
 
 WORKDIR /app
 
-COPY requirements.txt ./
+COPY requirements.txt /app/requirements.txt
 RUN python -m pip install --upgrade pip
-RUN pip install --no-cache-dir --upgrade -r requirements.txt
-RUN pip install fastapi uvicorn
+RUN pip install --no-cache-dir --upgrade -r /app/requirements.txt
 
 RUN --mount=type=secret,id=OPENAI_API_KEY \
     --mount=type=secret,id=GEMINI_API_KEY \
@@ -38,4 +37,4 @@ RUN --mount=type=secret,id=OPENAI_API_KEY \
 
 COPY . .
 
-CMD ["python3", "-m", "virtualenv", "venv", "&&", "source", "venv/bin/activate", "&&", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", ${APP_PORT}]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", ${APP_PORT}]
