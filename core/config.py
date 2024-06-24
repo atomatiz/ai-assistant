@@ -26,6 +26,8 @@ class Settings(BaseSettings):
     REDIS_PORT: int
     ALLOWED_HOST_1: str
     ALLOWED_HOST_2: str
+    ALLOWED_HOST_3: str
+    ALLOWED_HOST_4: str
     PORT: int
     class Config:
        env_file = dotenv_path
