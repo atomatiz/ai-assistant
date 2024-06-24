@@ -8,7 +8,7 @@ ARG APP_ENV
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
-# ENV ENV=${APP_ENV}
+ENV ENV=${APP_ENV}
 
 COPY requirements.txt /app/requirements.txt
 RUN python -m pip install --upgrade pip
@@ -35,6 +35,6 @@ RUN --mount=type=secret,id=OPENAI_API_KEY \
     ALLOWED_HOST_1=$(cat /run/secrets/ALLOWED_HOST_1)'\n'\ 
     ALLOWED_HOST_2=$(cat /run/secrets/ALLOWED_HOST_2)'\n'\ 
     ENV=$(cat /run/secrets/ENV)'\n'\
-    PORT=$(cat /run/secrets/PORT) >> .env
+    PORT=$(cat /run/secrets/PORT) >> .env.${APP_ENV}
 
 CMD uvicorn main:app --host 0.0.0.0 --port 8000
