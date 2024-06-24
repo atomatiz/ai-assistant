@@ -15,6 +15,7 @@ RUN pip install --no-cache-dir --upgrade -r /app/requirements.txt
 
 COPY . /app
 
+RUN echo -e ENV=${APP_ENV} >> .env
 RUN --mount=type=secret,id=OPENAI_API_KEY \
     --mount=type=secret,id=GEMINI_API_KEY \
     --mount=type=secret,id=OPENAI_MODEL \
@@ -23,7 +24,6 @@ RUN --mount=type=secret,id=OPENAI_API_KEY \
     --mount=type=secret,id=REDIS_PORT \
     --mount=type=secret,id=ALLOWED_HOST_1 \
     --mount=type=secret,id=ALLOWED_HOST_2 \
-    --mount=type=secret,id=ENV \
     --mount=type=secret,id=PORT \
     echo -e OPENAI_API_KEY=$(cat /run/secrets/OPENAI_API_KEY)'\n'\
     GEMINI_API_KEY=$(cat /run/secrets/GEMINI_API_KEY)'\n'\
@@ -33,7 +33,6 @@ RUN --mount=type=secret,id=OPENAI_API_KEY \
     REDIS_PORT=$(cat /run/secrets/REDIS_PORT)'\n'\
     ALLOWED_HOST_1=$(cat /run/secrets/ALLOWED_HOST_1)'\n'\ 
     ALLOWED_HOST_2=$(cat /run/secrets/ALLOWED_HOST_2)'\n'\ 
-    ENV=$(cat /run/secrets/ENV)'\n'\ 
     PORT=$(cat /run/secrets/PORT) >> .env.${APP_ENV}
 
 CMD uvicorn main:app --host 0.0.0.0 --port 8000
