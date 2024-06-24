@@ -2,7 +2,7 @@ import os
 from dotenv import find_dotenv, load_dotenv
 from pydantic_settings import BaseSettings
 
-ENV = os.getenv("ENV", "production")
+ENV = os.getenv("ENV", "")
 
 def load_dotenv_fallback(env_files):
     for env_file in env_files:
@@ -13,12 +13,10 @@ def load_dotenv_fallback(env_files):
     return None
 
 ENV_FILES = {
-    "production": [".env.production", ".env"],
-    "development": [".env.development", ".env"],
-    "default": [".env"]
+    "env": [".env.production", ".env.development", ".env"],
 }
 
-dotenv_path = load_dotenv_fallback(ENV_FILES.get(ENV, ENV_FILES["default"]))
+dotenv_path = load_dotenv_fallback(ENV_FILES.get(ENV, ENV_FILES["env"]))
 class Settings(BaseSettings):
     OPENAI_API_KEY: str
     GEMINI_API_KEY: str
