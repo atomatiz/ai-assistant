@@ -2,7 +2,7 @@ ARG AI_ASSISTANT_IMAGE
 
 FROM ${AI_ASSISTANT_IMAGE}
 
-WORKDIR /app/
+WORKDIR /app
 
 ARG APP_ENV
 
@@ -21,7 +21,7 @@ RUN --mount=type=secret,id=OPENAI_API_KEY \
     --mount=type=secret,id=ALLOWED_HOST_1 \
     --mount=type=secret,id=ALLOWED_HOST_2 \
     --mount=type=secret,id=PORT \
-    echo -e OPENAI_API_KEY=$(cat /run/secrets/OPENAI_API_KEY)'\n'\
+    echo OPENAI_API_KEY=$(cat /run/secrets/OPENAI_API_KEY)'\n'\
     GEMINI_API_KEY=$(cat /run/secrets/GEMINI_API_KEY)'\n'\
     OPENAI_MODEL=$(cat /run/secrets/OPENAI_MODEL)'\n'\
     GEMINI_MODEL=$(cat /run/secrets/GEMINI_MODEL)'\n'\
