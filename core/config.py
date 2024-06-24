@@ -1,11 +1,24 @@
 import os
+from dotenv import find_dotenv, load_dotenv
 from pydantic_settings import BaseSettings
-from dotenv import load_dotenv
 
-load_dotenv()
+ENV = os.getenv("ENV", "production")
 
-ENV = os.getenv('ENV')
-os.environ["ENV"] = ENV
+def load_dotenv_fallback(env_files):
+    for env_file in env_files:
+        dotenv_path = find_dotenv(env_file)
+        if dotenv_path:
+            load_dotenv(dotenv_path)
+            return dotenv_path
+    return None
+
+ENV_FILES = {
+    "production": [".env.production", ".env"],
+    "development": [".env.development", ".env"],
+    "default": [".env"]
+}
+
+dotenv_path = load_dotenv_fallback(ENV_FILES.get(ENV, ENV_FILES["default"]))
 class Settings(BaseSettings):
     OPENAI_API_KEY: str
     GEMINI_API_KEY: str
@@ -16,16 +29,7 @@ class Settings(BaseSettings):
     ALLOWED_HOST_1: str
     ALLOWED_HOST_2: str
     PORT: int
-
     class Config:
-        
-        env = os.getenv("ENV", "production")
-
-        if env == "production":
-            env_file = ".env.production"
-        elif env == "development":
-            env_file = ".env.development"
-        else:
-            env_file = ".env"
+       env_file = dotenv_path
 
 settings = Settings()
