@@ -15,7 +15,6 @@ RUN pip install --no-cache-dir --upgrade -r /app/requirements.txt
 
 COPY . /app
 
-RUN echo -e ENV=${APP_ENV} >> .env
 RUN --mount=type=secret,id=OPENAI_API_KEY \
     --mount=type=secret,id=GEMINI_API_KEY \
     --mount=type=secret,id=OPENAI_MODEL \
