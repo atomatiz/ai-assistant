@@ -36,6 +36,8 @@ async def websocket_endpoint(websocket: WebSocket, device_id: str, redis: Redis 
                     continue
                 
                 message = Message(id=str(uuid.uuid4()), prompt=f"You: {prompt}")
+                context_data = await redis.get(context_key)
+                context = Context.parse_raw(context_data)
                 context.messages.append(message)
                 await websocket.send_json({"type": "message", "data": message.dict()})
                 await redis.set(context_key, context.json())
