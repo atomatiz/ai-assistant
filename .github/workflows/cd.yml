@@ -67,10 +67,10 @@ jobs:
             ${{vars.AI_ASSISTANT_CMD}} docker pull ${{ secrets.DOCKER_USERNAME }}/${{secrets.DOCKER_IMAGE}}:${{vars.AI_ASSISTANT_TAG}} || true
             ${{vars.AI_ASSISTANT_CMD}} docker stop ${{vars.AI_ASSISTANT_CONTAINER}}-1 || true
             ${{vars.AI_ASSISTANT_CMD}} docker rm ${{vars.AI_ASSISTANT_CONTAINER}}-1 || true
-            ${{vars.AI_ASSISTANT_CMD}} docker run -d --restart unless-stopped -p ${{ vars.AI_ASSISTANT_EXPOSE_PORT_1 }}:${{ vars.AI_ASSISTANT_PORT }} --name ${{vars.AI_ASSISTANT_CONTAINER}}-1 ${{ secrets.DOCKER_USERNAME }}/${{secrets.DOCKER_IMAGE}}:${{vars.AI_ASSISTANT_TAG}} || true
+            ${{vars.AI_ASSISTANT_CMD}} docker run -d --restart unless-stopped -p ${{ vars.AI_ASSISTANT_EXPOSE_PORT_1 }}:${{ vars.AI_ASSISTANT_PORT }} --network ${{vars.NETWORK}} --name ${{vars.AI_ASSISTANT_CONTAINER}}-1 ${{ secrets.DOCKER_USERNAME }}/${{secrets.DOCKER_IMAGE}}:${{vars.AI_ASSISTANT_TAG}} || true
             ${{vars.AI_ASSISTANT_CMD}} docker image prune -af || true
             ${{vars.AI_ASSISTANT_CMD}} docker volume prune -af || true
 
 #            ${{vars.AI_ASSISTANT_CMD}} docker stop ${{vars.AI_ASSISTANT_CONTAINER}}-2 || true
 #            ${{vars.AI_ASSISTANT_CMD}} docker rm ${{vars.AI_ASSISTANT_CONTAINER}}-2 || true
-#            ${{vars.AI_ASSISTANT_CMD}} docker run -d --restart unless-stopped -p ${{ vars.AI_ASSISTANT_EXPOSE_PORT_2 }}:${{ vars.AI_ASSISTANT_PORT }} --name ${{vars.AI_ASSISTANT_CONTAINER}}-2 ${{ secrets.DOCKER_USERNAME }}/${{secrets.DOCKER_IMAGE}}:${{vars.AI_ASSISTANT_TAG}} || true
+#            ${{vars.AI_ASSISTANT_CMD}} docker run -d --restart unless-stopped -p ${{ vars.AI_ASSISTANT_EXPOSE_PORT_2 }}:${{ vars.AI_ASSISTANT_PORT }} --network ${{vars.NETWORK}} --name ${{vars.AI_ASSISTANT_CONTAINER}}-2 ${{ secrets.DOCKER_USERNAME }}/${{secrets.DOCKER_IMAGE}}:${{vars.AI_ASSISTANT_TAG}} || true

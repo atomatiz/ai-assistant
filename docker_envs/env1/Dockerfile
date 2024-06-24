@@ -33,8 +33,4 @@ RUN --mount=type=secret,id=OPENAI_API_KEY \
 
 COPY . /app/
 
-RUN chmod +x /app/.env.production
-RUN ls /app/
-RUN cat /app/.env.production
-
 CMD uvicorn main:app --host 0.0.0.0 --port 8000
