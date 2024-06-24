@@ -11,7 +11,7 @@ import openai
 import google.generativeai as genai
 
 openai.api_key=settings.OPENAI_API_KEY
-genai.configure(api_key= settings.GEMINI_API_KEY)
+genai.configure(api_key=settings.GEMINI_API_KEY)
 model = genai.GenerativeModel(model_name=settings.GEMINI_MODEL)
 
 async def query_openai(prompt: str) -> str:
