@@ -10,7 +10,6 @@ class Settings(BaseSettings):
     REDIS_PORT: int
     ALLOWED_HOST_1: str
     ALLOWED_HOST_2: str
-    ENV: str
     PORT: int
 
     class Config:
