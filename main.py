@@ -8,8 +8,7 @@ from core.config import settings
 app = FastAPI()
 
 origins = [
-    settings.ALLOWED_HOST_1,
-    settings.ALLOWED_HOST_2
+    "*"
 ]
 
 app.add_middleware(
