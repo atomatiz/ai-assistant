@@ -48,7 +48,6 @@ jobs:
             "REDIS_PORT=${{ secrets.REDIS_PORT }}"
             "ALLOWED_HOST_1=${{ secrets.ALLOWED_HOST_1 }}"
             "ALLOWED_HOST_2=${{ secrets.ALLOWED_HOST_2 }}"
-            "ENV=${{ secrets.ENV }}"
             "PORT=${{ secrets.PORT }}"
 
       - name: Verify docker job

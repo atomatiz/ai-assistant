@@ -2,7 +2,7 @@ import os
 from pydantic_settings import BaseSettings
 from dotenv import load_dotenv
 
-load_dotenv() 
+load_dotenv()
 
 ENV = os.getenv('ENV')
 os.environ["ENV"] = ENV
