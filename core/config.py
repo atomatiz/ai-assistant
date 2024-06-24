@@ -13,6 +13,14 @@ class Settings(BaseSettings):
     PORT: int
 
     class Config:
-       env_file = ".env.production" if os.getenv("ENV") == "production" else ".env"
+        
+        env = os.getenv("ENV", "production")
+
+        if env == "production":
+            env_file = ".env.production"
+        elif env == "development":
+            env_file = ".env.development"
+        else:
+            env_file = ".env"
 
 settings = Settings()
