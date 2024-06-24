@@ -30,7 +30,7 @@ RUN --mount=type=secret,id=OPENAI_API_KEY \
     REDIS_PORT=$(cat /run/secrets/REDIS_PORT)'\n'\
     ALLOWED_HOST_1=$(cat /run/secrets/ALLOWED_HOST_1)'\n'\ 
     ALLOWED_HOST_2=$(cat /run/secrets/ALLOWED_HOST_2)'\n'\ 
-    PORT=$(cat /run/secrets/PORT) >> .env.${APP_ENV}
+    PORT=$(cat /run/secrets/PORT) >> .env
 
 COPY . .
 
