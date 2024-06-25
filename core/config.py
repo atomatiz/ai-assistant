@@ -4,6 +4,7 @@ from pydantic_settings import BaseSettings
 
 ENV = os.getenv("ENV", "")
 
+
 def load_dotenv_fallback(env_files):
     for env_file in env_files:
         dotenv_path = find_dotenv(env_file)
@@ -12,11 +13,14 @@ def load_dotenv_fallback(env_files):
             return dotenv_path
     return None
 
+
 ENV_FILES = {
     "env": [".env.production", ".env.development", ".env"],
 }
 
 dotenv_path = load_dotenv_fallback(ENV_FILES.get(ENV, ENV_FILES["env"]))
+
+
 class Settings(BaseSettings):
     OPENAI_API_KEY: str
     GEMINI_API_KEY: str
@@ -29,7 +33,9 @@ class Settings(BaseSettings):
     ALLOWED_HOST_3: str
     ALLOWED_HOST_4: str
     PORT: int
+
     class Config:
-       env_file = dotenv_path
+        env_file = dotenv_path
+
 
 settings = Settings()

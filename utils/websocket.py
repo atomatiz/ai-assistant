@@ -7,10 +7,13 @@ from core.config import settings
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("     :")
 
+
 class ConnectionManager:
     def __init__(self):
         self.active_connections: Dict[str, WebSocket] = {}
-        self.redis = Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, decode_responses=True)
+        self.redis = Redis(
+            host=settings.REDIS_HOST, port=settings.REDIS_PORT, decode_responses=True
+        )
 
     async def check_redis_connection(self):
         try:
@@ -33,5 +36,6 @@ class ConnectionManager:
 
     def get_redis(self) -> Redis:
         return self.redis
-    
+
+
 manager = ConnectionManager()
