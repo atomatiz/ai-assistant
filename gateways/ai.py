@@ -5,7 +5,7 @@ from services.ai import (
     generate_initial_conversation,
     query_gemini,
     query_openai,
-    send_by_token,
+    # send_by_token,
 )
 from utils.websocket import ConnectionManager
 from redis.asyncio import Redis
@@ -71,7 +71,9 @@ async def websocket_endpoint(
 
                 message = Message(id=str(uuid.uuid4()), prompt=f"You: {prompt}")
                 context.messages.append(message)
-                await websocket.send_json({"type": "message", "data": message.dict()})
+                await websocket.send_json(
+                    {"type": "client_message", "data": message.dict()}
+                )
                 await redis.set(context_key, context.json())
 
                 try:
@@ -90,10 +92,10 @@ async def websocket_endpoint(
                 context.messages.append(ai_message)
                 await redis.set(context_key, context.json())
 
-                words = response.split()
-                await send_by_token(websocket, ai_message.id, words)
+                # words = response.split()
+                # await send_by_token(websocket, ai_message.id, words)
                 await websocket.send_json(
-                    {"type": "message", "data": ai_message.dict()}
+                    {"type": "ai_message", "data": ai_message.dict()}
                 )
 
             elif action == "new_context":

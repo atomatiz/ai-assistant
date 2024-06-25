@@ -1,4 +1,4 @@
-import asyncio
+# import asyncio
 import uuid
 from core.config import settings
 from fastapi import Depends, WebSocket
@@ -27,14 +27,14 @@ async def query_gemini(prompt: str) -> str:
     return response.text
 
 
-async def send_by_token(
-    websocket: WebSocket, message_id: str, words: list[str], delay: float = 0.1
-):
-    for word in words:
-        await websocket.send_json(
-            {"type": "partial_message", "data": {"id": message_id, "prompt": word}}
-        )
-        await asyncio.sleep(delay)
+# async def send_by_token(
+#     websocket: WebSocket, message_id: str, words: list[str], delay: float = 0.1
+# ):
+#     for word in words:
+#         await websocket.send_json(
+#             {"type": "partial_message", "data": {"id": message_id, "prompt": word}}
+#         )
+#         await asyncio.sleep(delay)
 
 
 async def generate_initial_conversation(
