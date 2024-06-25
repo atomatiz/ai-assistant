@@ -46,6 +46,8 @@ jobs:
             "GEMINI_MODEL=${{ secrets.GEMINI_MODEL }}"
             "REDIS_HOST=${{ secrets.REDIS_HOST }}"
             "REDIS_PORT=${{ secrets.REDIS_PORT }}"
+            "REDIS_USER=${{ secrets.REDIS_USER }}"
+            "REDIS_PASS=${{ secrets.REDIS_PASS }}"
             "ALLOWED_HOST_1=${{ secrets.ALLOWED_HOST_1 }}"
             "ALLOWED_HOST_2=${{ secrets.ALLOWED_HOST_2 }}"
             "ALLOWED_HOST_3=${{ secrets.ALLOWED_HOST_3 }}"

@@ -28,6 +28,8 @@ class Settings(BaseSettings):
     GEMINI_MODEL: str
     REDIS_HOST: str
     REDIS_PORT: int
+    REDIS_USER: int
+    REDIS_PASS: int
     ALLOWED_HOST_1: str
     ALLOWED_HOST_2: str
     ALLOWED_HOST_3: str

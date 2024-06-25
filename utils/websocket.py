@@ -12,7 +12,11 @@ class ConnectionManager:
     def __init__(self):
         self.active_connections: Dict[str, WebSocket] = {}
         self.redis = Redis(
-            host=settings.REDIS_HOST, port=settings.REDIS_PORT, decode_responses=True
+            host=settings.REDIS_HOST,
+            port=settings.REDIS_PORT,
+            username=settings.REDIS_USER,
+            password=settings.REDIS_PASS,
+            decode_responses=True,
         )
 
     async def check_redis_connection(self):
