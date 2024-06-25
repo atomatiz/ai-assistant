@@ -104,9 +104,6 @@ async def websocket_endpoint(
                     websocket=websocket, locale=locale, device_id=device_id, redis=redis
                 )
 
-            elif action == "cleanup_session":
-                await redis.delete(context_key)
-
     except WebSocketDisconnect:
         manager.disconnect(device_id)
         print(f"Disconnected: {device_id}")

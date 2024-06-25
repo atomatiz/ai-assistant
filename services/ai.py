@@ -10,20 +10,23 @@ from utils.websocket import manager
 import openai
 import google.generativeai as genai
 
+
 openai.api_key = settings.OPENAI_API_KEY
 genai.configure(api_key=settings.GEMINI_API_KEY)
 model = genai.GenerativeModel(model_name=settings.GEMINI_MODEL)
 
 
-async def query_openai(prompt: str) -> str:
-    response = openai.completions.create(
+def query_openai(prompt: str) -> str:
+    response = openai.chat.completions.create(
         model=settings.OPENAI_MODEL,
-        prompt=prompt,
+        messages=[
+            {"role": "user", "content": prompt},
+        ],
     )
-    return await response.choices[0].text.strip()
+    return response.choices[0].message.content
 
 
-async def query_gemini(prompt: str) -> str:
+def query_gemini(prompt: str) -> str:
     response = model.generate_content(prompt)
     return response.text
 
