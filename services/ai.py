@@ -16,7 +16,7 @@ genai.configure(api_key=settings.GEMINI_API_KEY)
 model = genai.GenerativeModel(model_name=settings.GEMINI_MODEL)
 
 
-def query_openai(prompt: str) -> str:
+async def query_openai(prompt: str) -> str:
     response = openai.chat.completions.create(
         model=settings.OPENAI_MODEL,
         messages=[
@@ -26,7 +26,7 @@ def query_openai(prompt: str) -> str:
     return response.choices[0].message.content
 
 
-def query_gemini(prompt: str) -> str:
+async def query_gemini(prompt: str) -> str:
     response = model.generate_content(prompt)
     return response.text
 
