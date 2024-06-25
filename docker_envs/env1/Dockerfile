@@ -18,6 +18,8 @@ RUN --mount=type=secret,id=OPENAI_API_KEY \
     --mount=type=secret,id=GEMINI_MODEL \
     --mount=type=secret,id=REDIS_HOST \
     --mount=type=secret,id=REDIS_PORT \
+    --mount=type=secret,id=REDIS_USER \
+    --mount=type=secret,id=REDIS_PASS \
     --mount=type=secret,id=ALLOWED_HOST_1 \
     --mount=type=secret,id=ALLOWED_HOST_2 \
     --mount=type=secret,id=PORT \
@@ -27,6 +29,8 @@ RUN --mount=type=secret,id=OPENAI_API_KEY \
     GEMINI_MODEL=$(cat /run/secrets/GEMINI_MODEL)'\n'\
     REDIS_HOST=$(cat /run/secrets/REDIS_HOST)'\n'\
     REDIS_PORT=$(cat /run/secrets/REDIS_PORT)'\n'\
+    REDIS_USER=$(cat /run/secrets/REDIS_USER)'\n'\
+    REDIS_PASS=$(cat /run/secrets/REDIS_PASS)'\n'\
     ALLOWED_HOST_1=$(cat /run/secrets/ALLOWED_HOST_1)'\n'\ 
     ALLOWED_HOST_2=$(cat /run/secrets/ALLOWED_HOST_2)'\n'\ 
     ALLOWED_HOST_3=$(cat /run/secrets/ALLOWED_HOST_3)'\n'\ 
