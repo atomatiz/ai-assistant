@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, WebSocket, WebSocketDisconnect
+from constants.ai import CONTEXT_EXPIRE_TIME
 from models.context import Context
 from models.message import Message
 from services.ai import (
@@ -74,7 +75,7 @@ async def websocket_endpoint(
                 await websocket.send_json(
                     {"type": "client_message", "data": message.dict()}
                 )
-                await redis.set(context_key, context.json())
+                await redis.set(context_key, context.json(), ex=CONTEXT_EXPIRE_TIME)
 
                 try:
                     if model == "ChatGPT":
@@ -90,7 +91,7 @@ async def websocket_endpoint(
 
                 ai_message = Message(id=str(uuid.uuid4()), prompt=f"AI: {response}")
                 context.messages.append(ai_message)
-                await redis.set(context_key, context.json())
+                await redis.set(context_key, context.json(), ex=CONTEXT_EXPIRE_TIME)
 
                 # words = response.split()
                 # await send_by_token(websocket, ai_message.id, words)

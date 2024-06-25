@@ -1,5 +1,6 @@
 # import asyncio
 import uuid
+from constants.ai import CONTEXT_EXPIRE_TIME
 from core.config import settings
 from fastapi import Depends, WebSocket
 from redis import Redis
@@ -53,7 +54,7 @@ async def generate_initial_conversation(
     )
     initial_message = Message(id=str(uuid.uuid4()), prompt=greeting)
     context.messages.append(initial_message)
-    await redis.set(context_key, context.json())
+    await redis.set(context_key, context.json(), ex=CONTEXT_EXPIRE_TIME)
     await websocket.send_json(
         {
             "type": "context",
