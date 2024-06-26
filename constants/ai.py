@@ -21,3 +21,4 @@ class AI_WS_MESSAGE_TYPE(str, Enum):
     CLIENT_MESSAGE = "client_message"
     SWITCH_MODEL = "switch_model"
     CONTEXT = "context"
+    PARTIAL_MESSAGE = "partial_message"

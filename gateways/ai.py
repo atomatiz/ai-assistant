@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, WebSocket, WebSocketDisconnect
 from constants.ai import AI_WS_ACTION_TYPE
 from services.ai import (
     generate_initial_conversation,
-    handle_beginning_conversion,
+    handle_beginning_conversation,
     handle_rate_limit,
     handle_send_message,
     handle_switch_model,
@@ -26,7 +26,7 @@ async def websocket_endpoint(
     context_data = await redis.get(context_key)
 
     if context_data:
-        await handle_beginning_conversion(
+        await handle_beginning_conversation(
             websocket=websocket,
             locale=locale,
             context_key=context_key,

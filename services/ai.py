@@ -77,7 +77,7 @@ async def query_gemini(prompt: str) -> str:
     return response.text
 
 
-async def handle_beginning_conversion(
+async def handle_beginning_conversation(
     websocket: WebSocket,
     locale: str,
     context_key: str,
@@ -92,7 +92,7 @@ async def handle_beginning_conversion(
     else:
         await websocket.send_json(
             {
-                "type": "context",
+                "type": AI_WS_MESSAGE_TYPE.CONTEXT,
                 "data": {"messages": [message.dict() for message in context.messages]},
             }
         )
@@ -196,6 +196,9 @@ async def generate_initial_conversation(
 # ):
 #     for word in words:
 #         await websocket.send_json(
-#             {"type": "partial_message", "data": {"id": message_id, "prompt": word}}
+#             {
+#                 "type": AI_WS_MESSAGE_TYPE.PARTIAL_MESSAGE,
+#                 "data": {"id": message_id, "prompt": word},
+#             }
 #         )
 #         await asyncio.sleep(delay)
