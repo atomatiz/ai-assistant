@@ -58,15 +58,6 @@ async def websocket_endpoint(
                 model = data.get("model", "ChatGPT")
                 prompt = data.get("prompt", "").strip()
 
-                if not prompt:
-                    warn_message = (
-                        "AI: Tin nhắn không nên rỗng!"
-                        if locale == "vi"
-                        else "AI: Message shouldn't be empty!"
-                    )
-                    await websocket.send_json({"type": "error", "data": warn_message})
-                    continue
-
                 context_data = await redis.get(context_key)
                 context = Context.parse_raw(context_data)
 
