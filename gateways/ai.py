@@ -3,8 +3,10 @@ from constants.ai import AI_WS_ACTION_TYPE
 from services.ai import (
     generate_initial_conversation,
     handle_beginning_conversation,
+    handle_current_model,
     handle_rate_limit,
     handle_send_message,
+    handle_set_current_model,
     handle_switch_model,
 )
 from utils.websocket import ConnectionManager
@@ -75,6 +77,20 @@ async def websocket_endpoint(
                 await generate_initial_conversation(
                     websocket=websocket,
                     locale=locale,
+                    context_key=context_key,
+                    redis=redis,
+                )
+
+            elif action == AI_WS_ACTION_TYPE.SET_CURRENT_MODEL:
+                await handle_set_current_model(
+                    context_key=context_key,
+                    data=data,
+                    redis=redis,
+                )
+
+            elif action == AI_WS_ACTION_TYPE.CURRENT_MODEL:
+                await handle_current_model(
+                    websocket=websocket,
                     context_key=context_key,
                     redis=redis,
                 )
