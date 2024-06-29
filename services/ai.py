@@ -238,20 +238,26 @@ async def generate_initial_conversation(
     context_key: str,
     redis: Redis = Depends(manager.get_redis),
 ):
+    context_data = await redis.get(context_key)
+    context = Context.parse_raw(context_data)
+    current_model = (
+        AI_MODEL[0] if context.current_model == None else context.current_model
+    )
     await redis.delete(context_key)
-    context = Context(id=str(uuid.uuid4()), messages=[])
+    new_context = Context(id=str(uuid.uuid4()), messages=[])
     greeting = (
         "AI: Xin chào! Tôi có thể giúp gì cho bạn? 👋🏻"
         if locale == LOCALES[0]
         else "AI: Hello! How may I assist you today? 👋🏻"
     )
     initial_message = Message(id=str(uuid.uuid4()), prompt=greeting)
-    context.messages.append(initial_message)
-    await redis.set(context_key, context.json(), ex=CONTEXT_EXPIRE_TIME)
+    new_context.current_model = current_model
+    new_context.messages.append(initial_message)
+    await redis.set(context_key, new_context.json(), ex=CONTEXT_EXPIRE_TIME)
     await websocket.send_json(
         {
             "type": AI_WS_MESSAGE_TYPE.CONTEXT,
-            "data": {"messages": [message.dict() for message in context.messages]},
+            "data": {"messages": [message.dict() for message in new_context.messages]},
         }
     )
 
