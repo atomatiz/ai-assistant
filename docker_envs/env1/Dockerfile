@@ -39,4 +39,4 @@ RUN --mount=type=secret,id=OPENAI_API_KEY \
 
 COPY . /app/
 
-CMD uvicorn main:app --host 0.0.0.0 --port 8000
+CMD python main.py
