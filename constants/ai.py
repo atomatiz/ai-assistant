@@ -5,7 +5,6 @@ RATE_LIMIT_COUNT = 5
 RATE_LIMIT_PERIOD = 10  # seconds
 AI_MODEL = "ChatGPT", "Gemini"
 AI_MODEL_NAME = "GPT-3.5 Turbo", "Gemini 1.5 Pro"
-LOCALES = "vi", "en"
 ACTIVE_TYPES = "send_message", "switch_model"
 
 

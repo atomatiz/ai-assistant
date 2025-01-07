@@ -55,45 +55,42 @@ async def websocket_endpoint(
             data = await websocket.receive_json()
             action = data.get("action", AI_WS_ACTION_TYPE.SEND_MESSAGE)
 
-            if action == AI_WS_ACTION_TYPE.SEND_MESSAGE:
-                await handle_send_message(
-                    websocket=websocket,
-                    locale=locale,
-                    context_key=context_key,
-                    data=data,
-                    redis=redis,
-                )
-
-            elif action == AI_WS_ACTION_TYPE.SWITCH_MODEL:
-                await handle_switch_model(
-                    websocket=websocket,
-                    locale=locale,
-                    context_key=context_key,
-                    data=data,
-                    redis=redis,
-                )
-
-            elif action == AI_WS_ACTION_TYPE.NEW_CONTEXT:
-                await generate_initial_conversation(
-                    websocket=websocket,
-                    locale=locale,
-                    context_key=context_key,
-                    redis=redis,
-                )
-
-            elif action == AI_WS_ACTION_TYPE.SET_CURRENT_MODEL:
-                await handle_set_current_model(
-                    context_key=context_key,
-                    data=data,
-                    redis=redis,
-                )
-
-            elif action == AI_WS_ACTION_TYPE.CURRENT_MODEL:
-                await handle_current_model(
-                    websocket=websocket,
-                    context_key=context_key,
-                    redis=redis,
-                )
+            match action:
+                case AI_WS_ACTION_TYPE.SEND_MESSAGE:
+                    await handle_send_message(
+                        websocket=websocket,
+                        locale=locale,
+                        context_key=context_key,
+                        data=data,
+                        redis=redis,
+                    )
+                case AI_WS_ACTION_TYPE.SWITCH_MODEL:
+                    await handle_switch_model(
+                        websocket=websocket,
+                        locale=locale,
+                        context_key=context_key,
+                        data=data,
+                        redis=redis,
+                    )
+                case AI_WS_ACTION_TYPE.NEW_CONTEXT:
+                    await generate_initial_conversation(
+                        websocket=websocket,
+                        locale=locale,
+                        context_key=context_key,
+                        redis=redis,
+                    )
+                case AI_WS_ACTION_TYPE.SET_CURRENT_MODEL:
+                    await handle_set_current_model(
+                        context_key=context_key,
+                        data=data,
+                        redis=redis,
+                    )
+                case AI_WS_ACTION_TYPE.CURRENT_MODEL:
+                    await handle_current_model(
+                        websocket=websocket,
+                        context_key=context_key,
+                        redis=redis,
+                    )
 
     except WebSocketDisconnect:
         manager.disconnect(device_id)

@@ -1,0 +1,29 @@
+# AI-ASSISTANT
+# Copyright (C) 2025
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0\n"
+"POT-Creation-Date: 2025-01-07 20:14+0700\n"
+"PO-Revision-Date: 2025-01-07 20:14+0700\n"
+"Last-Translator: atomatiz <EMAIL@ADDRESS>\n"
+"Language-Team: AI-ASSISTANT <EMAIL@ADDRESS>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+
+msgid "rate_limit"
+msgstr "Rate limit exceeded. Try again later ❌"
+
+msgid "unavailable_model"
+msgstr "This model is currently unavailable, please select the other one ❗️"
+
+msgid "ai_activated_1"
+msgstr "AI: GPT-3.5 Turbo has been activated 🚀"
+
+msgid "ai_activated_2"
+msgstr "AI: Gemini 1.5 Pro has been activated 🚀"
+
+msgid "ai_greeting"
+msgstr "AI: Hello! How may I assist you today? 👋🏻"
