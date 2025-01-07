@@ -9,10 +9,10 @@ from constants.ai import (
     CONTEXT_EXPIRE_TIME,
     GEMINI_ROLES,
     GPT_ROLES,
-    LOCALES,
     RATE_LIMIT_COUNT,
     RATE_LIMIT_PERIOD,
 )
+from constants.i18n import TRANSLATION_KEY
 from core.config import settings
 from fastapi import Depends, WebSocket
 from redis import Redis
@@ -21,9 +21,18 @@ from models.message import Message
 from utils.websocket import manager
 import openai
 import google.generativeai as genai
+from utils.i18n import t
 
 rate_limit_data = defaultdict(list)
 
+ai_mapping = {
+    AI_MODEL[0]: AI_MODEL_NAME[0],
+    AI_MODEL[1]: AI_MODEL_NAME[1],
+}
+ai_translation_key_mapping = {
+    AI_MODEL_NAME[0]: TRANSLATION_KEY.AI_ACTIVATED_1,
+    AI_MODEL_NAME[1]: TRANSLATION_KEY.AI_ACTIVATED_2,
+}
 
 async def handle_rate_limit(
     websocket: WebSocket,
@@ -42,11 +51,7 @@ async def handle_rate_limit(
 
     if len(rate_limit_data[device_id]) >= RATE_LIMIT_COUNT:
         context = Context.parse_raw(context_data)
-        locale_message = (
-            f"Rate limit exceeded. Try again later ❌"
-            if locale == LOCALES[1]
-            else f"Đã vượt quá giới hạn gửi. Hãy thử lại sau ❌"
-        )
+        locale_message = t(locale, TRANSLATION_KEY.RATE_LIMIT)
         message = Message(
             id=str(uuid.uuid4()),
             prompt=locale_message,
@@ -107,34 +112,32 @@ async def generate_context_messages(
     )
     for msg in context.messages:
         if msg.prompt.startswith("You:"):
-            (
+            if model == AI_MODEL[0]:
                 context_messages.append(
                     {"role": GPT_ROLES.USER, "content": msg.prompt.replace("You:", "")}
                 )
-                if model == AI_MODEL[0]
-                else context_messages.append(
+            elif model == AI_MODEL[1]:
+                context_messages.append(
                     {
                         "role": GEMINI_ROLES.USER,
                         "parts": [msg.prompt.replace("You:", "")],
                     }
                 )
-            )
         elif msg.prompt.startswith("AI:"):
-            (
+            if model == AI_MODEL[0]:
                 context_messages.append(
                     {
                         "role": GPT_ROLES.ASSISTANT,
                         "content": msg.prompt.replace("AI:", ""),
                     }
                 )
-                if model == AI_MODEL[0]
-                else context_messages.append(
+            elif model == AI_MODEL[1]:
+                context_messages.append(
                     {
                         "role": GEMINI_ROLES.MODEL,
                         "parts": [msg.prompt.replace("AI:", "")],
                     }
                 )
-            )
         else:
             continue
     return context_messages
@@ -185,16 +188,12 @@ async def handle_send_message(
             response = await query_openai(
                 prompt=prompt, context_key=context_key, redis=redis
             )
-        else:
+        elif model == AI_MODEL[1]:
             response = await query_gemini(
                 prompt=prompt, context_key=context_key, redis=redis
             )
     except Exception:
-        response = (
-            "Mẫu này hiện không hỗ trợ, vui lòng chọn mẫu khác ❗️"
-            if locale == LOCALES[0]
-            else "This model is currently unavailable, please select the other one ❗️"
-        )
+        response = t(locale, TRANSLATION_KEY.UNAVAILABLE_MODEL)
 
     ai_message = Message(id=str(uuid.uuid4()), prompt=f"AI: {response}")
     context.messages.append(ai_message)
@@ -216,12 +215,7 @@ async def handle_switch_model(
 ):
     context_data = await redis.get(context_key)
     model = data.get("model", AI_MODEL[0])
-    model_name = AI_MODEL_NAME[0] if model == AI_MODEL[0] else AI_MODEL_NAME[1]
-    locale_message = (
-        f"AI: {model_name} has been activated 🚀"
-        if locale == LOCALES[1]
-        else f"AI: {model_name} đã được kích hoạt 🚀"
-    )
+    locale_message = t(locale, ai_translation_key_mapping[ai_mapping[model]])
     context = Context.parse_raw(context_data)
     message = Message(id=str(uuid.uuid4()), prompt=locale_message)
     context.messages.append(message)
@@ -245,11 +239,7 @@ async def generate_initial_conversation(
     )
     await redis.delete(context_key)
     context = Context(id=str(uuid.uuid4()), messages=[])
-    greeting = (
-        "AI: Xin chào! Tôi có thể giúp gì cho bạn? 👋🏻"
-        if locale == LOCALES[0]
-        else "AI: Hello! How may I assist you today? 👋🏻"
-    )
+    greeting = t(locale, TRANSLATION_KEY.AI_GREETING)
     initial_message = Message(id=str(uuid.uuid4()), prompt=greeting)
     context.current_model = current_model
     context.messages.append(initial_message)
