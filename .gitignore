@@ -5,6 +5,7 @@
 *.pyd
 *.log
 *.env
+.vscode/
 
 # misc
 .DS_Store
