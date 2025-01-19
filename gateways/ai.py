@@ -1,5 +1,8 @@
 from fastapi import APIRouter, Depends, WebSocket, WebSocketDisconnect
-from constants.ai import AI_WS_ACTION_TYPE
+from constants.websocket import AI_WS_ACTION_TYPE, WS_KEYS
+from utils.websocket import webSocketManager
+from utils.redis import redisManager
+from redis.asyncio import Redis
 from services.ai import (
     generate_initial_conversation,
     handle_beginning_conversation,
@@ -9,11 +12,9 @@ from services.ai import (
     handle_set_current_model,
     handle_switch_model,
 )
-from utils.websocket import ConnectionManager
-from redis.asyncio import Redis
+from utils.logger import logger
 
 router = APIRouter()
-manager = ConnectionManager()
 
 
 @router.websocket("/ws/{locale}/{device_id}")
@@ -21,10 +22,10 @@ async def websocket_endpoint(
     websocket: WebSocket,
     locale: str,
     device_id: str,
-    redis: Redis = Depends(manager.get_redis),
+    redis: Redis = Depends(redisManager.get_redis),
 ):
-    await manager.connect(websocket, device_id)
-    context_key = f"context:{device_id}"
+    await webSocketManager.connect(websocket, device_id)
+    context_key = f"{WS_KEYS.CONTEXT}:{device_id}"
     context_data = await redis.get(context_key)
 
     if context_data:
@@ -53,7 +54,7 @@ async def websocket_endpoint(
             )
 
             data = await websocket.receive_json()
-            action = data.get("action", AI_WS_ACTION_TYPE.SEND_MESSAGE)
+            action = data.get(f"{WS_KEYS.ACTION}", AI_WS_ACTION_TYPE.SEND_MESSAGE)
 
             match action:
                 case AI_WS_ACTION_TYPE.SEND_MESSAGE:
@@ -93,5 +94,5 @@ async def websocket_endpoint(
                     )
 
     except WebSocketDisconnect:
-        manager.disconnect(device_id)
-        print(f"Disconnected: {device_id}")
+        webSocketManager.disconnect(device_id)
+        logger.info(f"Websocket disconnected: {device_id}")

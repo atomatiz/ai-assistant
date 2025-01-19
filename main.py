@@ -1,34 +1,41 @@
+from contextlib import asynccontextmanager
 import uvicorn
 from fastapi import FastAPI
 from gateways import ai
-from utils.websocket import manager
+from utils.redis import redisManager
 from fastapi.middleware.cors import CORSMiddleware
-from core.config import settings
+from constants.base import (
+    ALLOWED_HEADERS,
+    ALLOWED_METHODS,
+    HOST,
+    MODULE,
+    ORIGINS,
+    PORT,
+    PREFIX,
+)
+from utils.logger import logger
 
-app = FastAPI()
 
-origins = [
-    settings.ALLOWED_HOST_1,
-    settings.ALLOWED_HOST_2,
-    settings.ALLOWED_HOST_3,
-    settings.ALLOWED_HOST_4,
-]
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    app.state.redis = await redisManager.check_redis_connection()
+    yield
+    # Shutdown
+    app.state.shutdown = logger.info("Shutting down...")
+
+
+app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=ORIGINS,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=ALLOWED_METHODS,
+    allow_headers=ALLOWED_HEADERS,
 )
 
+app.include_router(ai.router, prefix=PREFIX)
 
-@app.on_event("startup")
-async def startup_event():
-    await manager.check_redis_connection()
-
-
-app.include_router(ai.router, prefix="/api")
-
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=settings.PORT)
+if __name__ == MODULE:
+    uvicorn.run(app, host=HOST, port=PORT)
