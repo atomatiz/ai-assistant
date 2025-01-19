@@ -25,7 +25,7 @@ async def websocket_endpoint(
     redis: Redis = Depends(redisManager.get_redis),
 ):
     await webSocketManager.connect(websocket, device_id)
-    context_key = f"{WS_KEYS.CONTEXT}:{device_id}"
+    context_key = f"{WS_KEYS.CONTEXT.value}:{device_id}"
     context_data = await redis.get(context_key)
 
     if context_data:
@@ -54,10 +54,12 @@ async def websocket_endpoint(
             )
 
             data = await websocket.receive_json()
-            action = data.get(f"{WS_KEYS.ACTION}", AI_WS_ACTION_TYPE.SEND_MESSAGE)
+            action = data.get(
+                f"{WS_KEYS.ACTION.value}", AI_WS_ACTION_TYPE.SEND_MESSAGE.value
+            )
 
             match action:
-                case AI_WS_ACTION_TYPE.SEND_MESSAGE:
+                case AI_WS_ACTION_TYPE.SEND_MESSAGE.value:
                     await handle_send_message(
                         websocket=websocket,
                         locale=locale,
@@ -65,7 +67,7 @@ async def websocket_endpoint(
                         data=data,
                         redis=redis,
                     )
-                case AI_WS_ACTION_TYPE.SWITCH_MODEL:
+                case AI_WS_ACTION_TYPE.SWITCH_MODEL.value:
                     await handle_switch_model(
                         websocket=websocket,
                         locale=locale,
@@ -73,20 +75,20 @@ async def websocket_endpoint(
                         data=data,
                         redis=redis,
                     )
-                case AI_WS_ACTION_TYPE.NEW_CONTEXT:
+                case AI_WS_ACTION_TYPE.NEW_CONTEXT.value:
                     await generate_initial_conversation(
                         websocket=websocket,
                         locale=locale,
                         context_key=context_key,
                         redis=redis,
                     )
-                case AI_WS_ACTION_TYPE.SET_CURRENT_MODEL:
+                case AI_WS_ACTION_TYPE.SET_CURRENT_MODEL.value:
                     await handle_set_current_model(
                         context_key=context_key,
                         data=data,
                         redis=redis,
                     )
-                case AI_WS_ACTION_TYPE.CURRENT_MODEL:
+                case AI_WS_ACTION_TYPE.CURRENT_MODEL.value:
                     await handle_current_model(
                         websocket=websocket,
                         context_key=context_key,
