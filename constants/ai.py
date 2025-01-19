@@ -1,11 +1,27 @@
 from enum import Enum
+from core.setting import settings
 
-CONTEXT_EXPIRE_TIME = 86400  # 24hrs by seconds
-RATE_LIMIT_COUNT = 5
-RATE_LIMIT_PERIOD = 10  # seconds
-AI_MODEL = "ChatGPT", "Gemini"
-AI_MODEL_NAME = "GPT-3.5 Turbo", "Gemini 1.5 Pro"
-ACTIVE_TYPES = "send_message", "switch_model"
+GPT_DEFAULT_CONTENT = "You are a helpful assistant."
+
+
+class AI_MODELS(str, Enum):
+    CHATGPT = "ChatGPT"
+    GEMINI = "Gemini"
+
+
+class AI_MODEL_NAMES(str, Enum):
+    CHATGPT = "GPT-3.5 Turbo"
+    GEMINI = "Gemini 1.5 Pro"
+
+
+class AI_QUERY_MODELS(str, Enum):
+    OPENAI = settings.OPENAI_MODEL
+    GEMINI = settings.GEMINI_MODEL
+
+
+class AI_API_KEYS(str, Enum):
+    OPENAI = settings.OPENAI_API_KEY
+    GEMINI = settings.GEMINI_API_KEY
 
 
 class GPT_ROLES(str, Enum):
@@ -14,24 +30,16 @@ class GPT_ROLES(str, Enum):
     ASSISTANT = "assistant"
 
 
+class GPT_CONTEXT_MESSAGE_KEYS(str, Enum):
+    ROLE = "role"
+    CONTENT = "content"
+
+
 class GEMINI_ROLES(str, Enum):
     USER = "user"
     MODEL = "model"
 
 
-class AI_WS_ACTION_TYPE(str, Enum):
-    SEND_MESSAGE = "send_message"
-    SWITCH_MODEL = "switch_model"
-    NEW_CONTEXT = "new_context"
-    SET_CURRENT_MODEL = "set_current_model"
-    CURRENT_MODEL = "current_model"
-
-
-class AI_WS_MESSAGE_TYPE(str, Enum):
-    SYSTEM_MESSAGE = "system_message"
-    AI_MESSAGE = "ai_message"
-    CLIENT_MESSAGE = "client_message"
-    SWITCH_MODEL = "switch_model"
-    CONTEXT = "context"
-    PARTIAL_MESSAGE = "partial_message"
-    CURRENT_MODEL = "current_model"
+class GEMINI_CONTEXT_MESSAGE_KEYS(str, Enum):
+    ROLE = "role"
+    PARTS = "parts"
