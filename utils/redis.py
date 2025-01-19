@@ -6,11 +6,11 @@ from utils.logger import logger
 class RedisManager:
     def __init__(self):
         self.redis = Redis(
-            host=REDIS_CONNECTION_PARAMETERS.HOST,
-            port=REDIS_CONNECTION_PARAMETERS.PORT,
-            username=REDIS_CONNECTION_PARAMETERS.USERNAME,
-            password=REDIS_CONNECTION_PARAMETERS.PASSWORD,
-            decode_responses=REDIS_CONNECTION_PARAMETERS.DECODE_RESPONSE,
+            host=REDIS_CONNECTION_PARAMETERS.HOST.value,
+            port=REDIS_CONNECTION_PARAMETERS.PORT.value,
+            username=REDIS_CONNECTION_PARAMETERS.USERNAME.value,
+            password=REDIS_CONNECTION_PARAMETERS.PASSWORD.value,
+            decode_responses=REDIS_CONNECTION_PARAMETERS.DECODE_RESPONSE.value,
         )
 
     async def check_redis_connection(self):

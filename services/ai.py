@@ -29,12 +29,12 @@ from utils.i18n import t
 rate_limit_data = defaultdict(list)
 
 ai_mapper = {
-    AI_MODELS.CHATGPT: AI_MODEL_NAMES.CHATGPT,
-    AI_MODELS.GEMINI: AI_MODEL_NAMES.GEMINI,
+    AI_MODELS.CHATGPT.value: AI_MODEL_NAMES.CHATGPT.value,
+    AI_MODELS.GEMINI.value: AI_MODEL_NAMES.GEMINI.value,
 }
 ai_translation_key_mapper = {
-    AI_MODEL_NAMES.CHATGPT: TRANSLATION_KEYS.AI_ACTIVATED_1,
-    AI_MODEL_NAMES.GEMINI: TRANSLATION_KEYS.AI_ACTIVATED_2,
+    AI_MODEL_NAMES.CHATGPT.value: TRANSLATION_KEYS.AI_ACTIVATED_1.value,
+    AI_MODEL_NAMES.GEMINI.value: TRANSLATION_KEYS.AI_ACTIVATED_2.value,
 }
 
 
@@ -55,7 +55,7 @@ async def handle_rate_limit(
 
     if len(rate_limit_data[device_id]) >= RATE_LIMIT_COUNT:
         context = Context.parse_raw(context_data)
-        locale_message = t(locale, TRANSLATION_KEYS.RATE_LIMIT)
+        locale_message = t(locale, TRANSLATION_KEYS.RATE_LIMIT.value)
         message = Message(
             id=str(uuid.uuid4()),
             prompt=locale_message,
@@ -63,8 +63,8 @@ async def handle_rate_limit(
         context.messages.append(message)
         await websocket.send_json(
             {
-                f"{AI_WS_SEND_KEYS.TYPE}": AI_WS_MESSAGE_TYPE.SYSTEM_MESSAGE,
-                f"{AI_WS_SEND_KEYS.DATA}": message.dict(),
+                f"{AI_WS_SEND_KEYS.TYPE.value}": AI_WS_MESSAGE_TYPE.SYSTEM_MESSAGE.value,
+                f"{AI_WS_SEND_KEYS.DATA.value}": message.dict(),
             }
         )
         await redis.set(context_key, context.json(), ex=CONTEXT_EXPIRE_TIME)
@@ -78,17 +78,17 @@ async def query_openai(
     context_key: str,
     redis: Redis = Depends(redisManager.get_redis),
 ) -> str:
-    openai.api_key = AI_API_KEYS.OPENAI
+    openai.api_key = AI_API_KEYS.OPENAI.value
     context_messages = await generate_context_messages(
-        model=AI_MODELS.CHATGPT, context_key=context_key, redis=redis
+        model=AI_MODELS.CHATGPT.value, context_key=context_key, redis=redis
     )
     response = openai.chat.completions.create(
-        model=AI_QUERY_MODELS.OPENAI,
+        model=AI_QUERY_MODELS.OPENAI.value,
         messages=context_messages
         + [
             {
-                f"{GPT_CONTEXT_MESSAGE_KEYS.ROLE}": GPT_ROLES.USER,
-                f"{GPT_CONTEXT_MESSAGE_KEYS.CONTENT}": prompt,
+                f"{GPT_CONTEXT_MESSAGE_KEYS.ROLE.value}": GPT_ROLES.USER.value,
+                f"{GPT_CONTEXT_MESSAGE_KEYS.CONTENT.value}": prompt,
             },
         ],
     )
@@ -100,15 +100,15 @@ async def query_gemini(
     context_key: str,
     redis: Redis = Depends(redisManager.get_redis),
 ) -> str:
-    genai.configure(api_key=AI_API_KEYS.GEMINI)
-    model = genai.GenerativeModel(model_name=AI_QUERY_MODELS.GEMINI)
+    genai.configure(api_key=AI_API_KEYS.GEMINI.value)
+    model = genai.GenerativeModel(model_name=AI_QUERY_MODELS.GEMINI.value)
     context_messages = await generate_context_messages(
-        model=AI_MODELS.GEMINI, context_key=context_key, redis=redis
+        model=AI_MODELS.GEMINI.value, context_key=context_key, redis=redis
     )
     context_messages.append(
         {
-            f"{GEMINI_CONTEXT_MESSAGE_KEYS.ROLE}": GEMINI_ROLES.USER,
-            f"{GEMINI_CONTEXT_MESSAGE_KEYS.PARTS}": [prompt],
+            f"{GEMINI_CONTEXT_MESSAGE_KEYS.ROLE.value}": GEMINI_ROLES.USER.value,
+            f"{GEMINI_CONTEXT_MESSAGE_KEYS.PARTS.value}": [prompt],
         }
     )
     response = model.generate_content(context_messages)
@@ -123,49 +123,49 @@ async def generate_context_messages(
     context_messages = (
         [
             {
-                f"{GPT_CONTEXT_MESSAGE_KEYS.ROLE}": GPT_ROLES.SYSTEM,
-                f"{GPT_CONTEXT_MESSAGE_KEYS.CONTENT}": GPT_DEFAULT_CONTENT,
+                f"{GPT_CONTEXT_MESSAGE_KEYS.ROLE.value}": GPT_ROLES.SYSTEM.value,
+                f"{GPT_CONTEXT_MESSAGE_KEYS.CONTENT.value}": GPT_DEFAULT_CONTENT,
             }
         ]
-        if model == AI_MODELS.CHATGPT
+        if model == AI_MODELS.CHATGPT.value
         else []
     )
     for msg in context.messages:
-        if msg.prompt.startswith(f"{SYSTEM_ROLES.USER}:"):
-            if model == AI_MODELS.CHATGPT:
+        if msg.prompt.startswith(f"{SYSTEM_ROLES.USER.value}:"):
+            if model == AI_MODELS.CHATGPT.value:
                 context_messages.append(
                     {
-                        f"{GPT_CONTEXT_MESSAGE_KEYS.ROLE}": GPT_ROLES.USER,
-                        f"{GPT_CONTEXT_MESSAGE_KEYS.CONTENT}": msg.prompt.replace(
-                            f"{SYSTEM_ROLES.USER}:", ""
+                        f"{GPT_CONTEXT_MESSAGE_KEYS.ROLE.value}": GPT_ROLES.USER.value,
+                        f"{GPT_CONTEXT_MESSAGE_KEYS.CONTENT.value}": msg.prompt.replace(
+                            f"{SYSTEM_ROLES.USER.value}:", ""
                         ),
                     }
                 )
-            elif model == AI_MODELS.GEMINI:
+            elif model == AI_MODELS.GEMINI.value:
                 context_messages.append(
                     {
-                        f"{GEMINI_CONTEXT_MESSAGE_KEYS.ROLE}": GEMINI_ROLES.USER,
-                        f"{GEMINI_CONTEXT_MESSAGE_KEYS.PARTS}": [
-                            msg.prompt.replace(f"{SYSTEM_ROLES.USER}:", "")
+                        f"{GEMINI_CONTEXT_MESSAGE_KEYS.ROLE.value}": GEMINI_ROLES.USER.value,
+                        f"{GEMINI_CONTEXT_MESSAGE_KEYS.PARTS.value}": [
+                            msg.prompt.replace(f"{SYSTEM_ROLES.USER.value}:", "")
                         ],
                     }
                 )
-        elif msg.prompt.startswith(f"{SYSTEM_ROLES.AI}:"):
-            if model == AI_MODELS.CHATGPT:
+        elif msg.prompt.startswith(f"{SYSTEM_ROLES.AI.value}:"):
+            if model == AI_MODELS.CHATGPT.value:
                 context_messages.append(
                     {
-                        f"{GPT_CONTEXT_MESSAGE_KEYS.ROLE}": GPT_ROLES.ASSISTANT,
-                        f"{GPT_CONTEXT_MESSAGE_KEYS.CONTENT}": msg.prompt.replace(
-                            f"{SYSTEM_ROLES.AI}:", ""
+                        f"{GPT_CONTEXT_MESSAGE_KEYS.ROLE.value}": GPT_ROLES.ASSISTANT.value,
+                        f"{GPT_CONTEXT_MESSAGE_KEYS.CONTENT.value}": msg.prompt.replace(
+                            f"{SYSTEM_ROLES.AI.value}:", ""
                         ),
                     }
                 )
-            elif model == AI_MODELS.GEMINI:
+            elif model == AI_MODELS.GEMINI.value:
                 context_messages.append(
                     {
-                        f"{GEMINI_CONTEXT_MESSAGE_KEYS.ROLE}": GEMINI_ROLES.MODEL,
-                        f"{GEMINI_CONTEXT_MESSAGE_KEYS.PARTS}": [
-                            msg.prompt.replace(f"{SYSTEM_ROLES.AI}:", "")
+                        f"{GEMINI_CONTEXT_MESSAGE_KEYS.ROLE.value}": GEMINI_ROLES.MODEL.value,
+                        f"{GEMINI_CONTEXT_MESSAGE_KEYS.PARTS.value}": [
+                            msg.prompt.replace(f"{SYSTEM_ROLES.AI.value}:", "")
                         ],
                     }
                 )
@@ -189,9 +189,9 @@ async def handle_beginning_conversation(
     else:
         await websocket.send_json(
             {
-                f"{AI_WS_SEND_KEYS.TYPE}": AI_WS_MESSAGE_TYPE.CONTEXT,
-                f"{AI_WS_SEND_KEYS.DATA}": {
-                    f"{AI_WS_SEND_KEYS.MESSAGES}": [
+                f"{AI_WS_SEND_KEYS.TYPE.value}": AI_WS_MESSAGE_TYPE.CONTEXT.value,
+                f"{AI_WS_SEND_KEYS.DATA.value}": {
+                    f"{AI_WS_SEND_KEYS.MESSAGES.value}": [
                         message.dict() for message in context.messages
                     ]
                 },
@@ -208,32 +208,36 @@ async def handle_send_message(
 ):
     context_data = await redis.get(context_key)
     context = Context.parse_raw(context_data)
-    model = data.get(f"{AI_REDIS_DATA_KEYS.MODEL}", AI_MODELS.CHATGPT)
-    prompt = data.get(f"{AI_REDIS_DATA_KEYS.PROMT}", "").strip()
+    model = data.get(f"{AI_REDIS_DATA_KEYS.MODEL.value}", AI_MODELS.CHATGPT.value)
+    prompt = data.get(f"{AI_REDIS_DATA_KEYS.PROMT.value}", "").strip()
 
-    message = Message(id=str(uuid.uuid4()), prompt=f"{SYSTEM_ROLES.USER}: {prompt}")
+    message = Message(
+        id=str(uuid.uuid4()), prompt=f"{SYSTEM_ROLES.USER.value}: {prompt}"
+    )
     context.messages.append(message)
     await websocket.send_json(
         {
-            f"{AI_WS_SEND_KEYS.TYPE}": AI_WS_MESSAGE_TYPE.CLIENT_MESSAGE,
-            f"{AI_WS_SEND_KEYS.DATA}": message.dict(),
+            f"{AI_WS_SEND_KEYS.TYPE.value}": AI_WS_MESSAGE_TYPE.CLIENT_MESSAGE.value,
+            f"{AI_WS_SEND_KEYS.DATA.value}": message.dict(),
         }
     )
     await redis.set(context_key, context.json(), ex=CONTEXT_EXPIRE_TIME)
 
     try:
-        if model == AI_MODELS.CHATGPT:
+        if model == AI_MODELS.CHATGPT.value:
             response = await query_openai(
                 prompt=prompt, context_key=context_key, redis=redis
             )
-        elif model == AI_MODELS.GEMINI:
+        elif model == AI_MODELS.GEMINI.value:
             response = await query_gemini(
                 prompt=prompt, context_key=context_key, redis=redis
             )
     except Exception:
-        response = t(locale, TRANSLATION_KEYS.UNAVAILABLE_MODEL)
+        response = t(locale, TRANSLATION_KEYS.UNAVAILABLE_MODEL.value)
 
-    ai_message = Message(id=str(uuid.uuid4()), prompt=f"{SYSTEM_ROLES.AI}: {response}")
+    ai_message = Message(
+        id=str(uuid.uuid4()), prompt=f"{SYSTEM_ROLES.AI.value}: {response}"
+    )
     context.messages.append(ai_message)
     await redis.set(context_key, context.json(), ex=CONTEXT_EXPIRE_TIME)
 
@@ -241,8 +245,8 @@ async def handle_send_message(
     # await send_by_token(websocket, ai_message.id, words)
     await websocket.send_json(
         {
-            f"{AI_WS_SEND_KEYS.TYPE}": AI_WS_MESSAGE_TYPE.AI_MESSAGE,
-            f"{AI_WS_SEND_KEYS.DATA}": ai_message.dict(),
+            f"{AI_WS_SEND_KEYS.TYPE.value}": AI_WS_MESSAGE_TYPE.AI_MESSAGE.value,
+            f"{AI_WS_SEND_KEYS.DATA.value}": ai_message.dict(),
         }
     )
 
@@ -255,15 +259,15 @@ async def handle_switch_model(
     redis: Redis = Depends(redisManager.get_redis),
 ):
     context_data = await redis.get(context_key)
-    model = data.get(f"{AI_REDIS_DATA_KEYS.MODEL}", AI_MODELS.CHATGPT)
+    model = data.get(f"{AI_REDIS_DATA_KEYS.MODEL.value}", AI_MODELS.CHATGPT.value)
     locale_message = t(locale, ai_translation_key_mapper[ai_mapper[model]])
     context = Context.parse_raw(context_data)
     message = Message(id=str(uuid.uuid4()), prompt=locale_message)
     context.messages.append(message)
     await websocket.send_json(
         {
-            f"{AI_WS_SEND_KEYS.TYPE}": AI_WS_MESSAGE_TYPE.SWITCH_MODEL,
-            f"{AI_WS_SEND_KEYS.DATA}": message.dict(),
+            f"{AI_WS_SEND_KEYS.TYPE.value}": AI_WS_MESSAGE_TYPE.SWITCH_MODEL.value,
+            f"{AI_WS_SEND_KEYS.DATA.value}": message.dict(),
         }
     )
     await redis.set(context_key, context.json(), ex=CONTEXT_EXPIRE_TIME)
@@ -279,22 +283,22 @@ async def generate_initial_conversation(
     context_data = await redis.get(context_key)
     previous_context = Context.parse_raw(context_data) if context_data != None else None
     current_model = (
-        AI_MODELS.CHATGPT
+        AI_MODELS.CHATGPT.value
         if previous_context == None
         else previous_context.current_model
     )
     await redis.delete(context_key)
     context = Context(id=str(uuid.uuid4()), messages=[])
-    greeting = t(locale, TRANSLATION_KEYS.AI_GREETING)
+    greeting = t(locale, TRANSLATION_KEYS.AI_GREETING.value)
     initial_message = Message(id=str(uuid.uuid4()), prompt=greeting)
     context.current_model = current_model
     context.messages.append(initial_message)
     await redis.set(context_key, context.json(), ex=CONTEXT_EXPIRE_TIME)
     await websocket.send_json(
         {
-            f"{AI_WS_SEND_KEYS.TYPE}": AI_WS_MESSAGE_TYPE.CONTEXT,
-            f"{AI_WS_SEND_KEYS.DATA}": {
-                f"{AI_WS_SEND_KEYS.MESSAGES}": [
+            f"{AI_WS_SEND_KEYS.TYPE.value}": AI_WS_MESSAGE_TYPE.CONTEXT.value,
+            f"{AI_WS_SEND_KEYS.DATA.value}": {
+                f"{AI_WS_SEND_KEYS.MESSAGES.value}": [
                     message.dict() for message in context.messages
                 ]
             },
@@ -309,7 +313,7 @@ async def handle_set_current_model(
 ):
     context_data = await redis.get(context_key)
     context = Context.parse_raw(context_data)
-    model = data.get(f"{AI_REDIS_DATA_KEYS.MODEL}", AI_MODELS.CHATGPT)
+    model = data.get(f"{AI_REDIS_DATA_KEYS.MODEL.value}", AI_MODELS.CHATGPT.value)
     if context.current_model != model:
         context.current_model = model
         await redis.set(context_key, context.json(), ex=CONTEXT_EXPIRE_TIME)
@@ -326,12 +330,12 @@ async def handle_current_model(
     context = Context.parse_raw(context_data)
     model = context.current_model
     if model == None:
-        context.current_model = AI_MODELS.CHATGPT
+        context.current_model = AI_MODELS.CHATGPT.value
         await websocket.send_json(
             {
-                f"{AI_WS_SEND_KEYS.TYPE}": AI_WS_MESSAGE_TYPE.CURRENT_MODEL,
-                f"{AI_WS_SEND_KEYS.DATA}": {
-                    f"{AI_WS_SEND_KEYS.MODEL}": AI_MODELS.CHATGPT
+                f"{AI_WS_SEND_KEYS.TYPE.value}": AI_WS_MESSAGE_TYPE.CURRENT_MODEL.value,
+                f"{AI_WS_SEND_KEYS.DATA.value}": {
+                    f"{AI_WS_SEND_KEYS.MODEL.value}": AI_MODELS.CHATGPT.value
                 },
             }
         )
@@ -339,8 +343,10 @@ async def handle_current_model(
     else:
         await websocket.send_json(
             {
-                f"{AI_WS_SEND_KEYS.TYPE}": AI_WS_MESSAGE_TYPE.CURRENT_MODEL,
-                f"{AI_WS_SEND_KEYS.DATA}": {f"{AI_WS_SEND_KEYS.MODEL}": model},
+                f"{AI_WS_SEND_KEYS.TYPE.value}": AI_WS_MESSAGE_TYPE.CURRENT_MODEL.value,
+                f"{AI_WS_SEND_KEYS.DATA.value}": {
+                    f"{AI_WS_SEND_KEYS.MODEL.value}": model
+                },
             }
         )
 
@@ -351,10 +357,10 @@ async def handle_current_model(
 #     for word in words:
 #         await websocket.send_json(
 #             {
-#                 f"{AI_WS_SEND_KEYS.TYPE}": AI_WS_MESSAGE_TYPE.PARTIAL_MESSAGE,
-#                 f"{AI_WS_SEND_KEYS.DATA}": {
-#                     f"{AI_WS_SEND_KEYS.ID}": message_id,
-#                     f"{AI_WS_SEND_KEYS.PROMPT}": word,
+#                 f"{AI_WS_SEND_KEYS.TYPE.value}": AI_WS_MESSAGE_TYPE.PARTIAL_MESSAGE.value,
+#                 f"{AI_WS_SEND_KEYS.DATA.value}": {
+#                     f"{AI_WS_SEND_KEYS.ID.value}": message_id,
+#                     f"{AI_WS_SEND_KEYS.PROMPT.value}": word,
 #                 },
 #             }
 #         )
